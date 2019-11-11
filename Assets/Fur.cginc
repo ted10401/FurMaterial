@@ -1,4 +1,4 @@
-#ifndef FUR_INCLUDED
+﻿#ifndef FUR_INCLUDED
 #define FUR_INCLUDED
 
 #include "UnityCG.cginc"
@@ -14,14 +14,20 @@ struct a2v
 struct v2f
 {
 	float4 vertex : SV_POSITION;
-	float2 uv_main : TEXCOORD0;
-	float2 uv_fur : TEXCOORD0;
+	float4 uv : TEXCOORD0;
+	float3 worldNormal : TEXCOORD1;
+	float3 worldPos : TEXCOORD2;
 };
 
+float4 _Color;
 sampler2D _MainTex;
 float4 _MainTex_ST;
 sampler2D _FurTex;
 float4 _FurTex_ST;
+float4 _Gravity;
+float4 _RimColor;
+float _RimPower;
+float _FurShading;
 float _FurLength;
 float _FurDensity;
 
@@ -30,32 +36,51 @@ v2f vert_base(a2v v)
 	v2f o;
 
 	o.vertex = UnityObjectToClipPos(v.vertex);
-	o.uv_main = TRANSFORM_TEX(v.uv, _MainTex);
+	o.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
 	return o;
 }
 
 fixed4 frag_base(v2f i) : SV_Target
 {
-	fixed4 mainCol = tex2D(_MainTex, i.uv_main);
-	return mainCol;
+	fixed4 mainCol = tex2D(_MainTex, i.uv.xy);
+	return mainCol * _Color;
 }
 
 v2f vert_fur(a2v v)
 {
 	v2f o;
 
-	v.vertex.xyz += v.normal * FUR_OFFSET * _FurLength * 0.01;
+	float3 gravity = _Gravity.xyz * _Gravity.w + v.normal;
+	float3 normal = lerp(v.normal, gravity, FUR_OFFSET);
+
+	v.vertex.xyz += normal * FUR_OFFSET * _FurLength * 0.01;
 	o.vertex = UnityObjectToClipPos(v.vertex);
-	o.uv_main = TRANSFORM_TEX(v.uv, _MainTex);
-	o.uv_fur = TRANSFORM_TEX(v.uv, _FurTex);
+	o.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
+	o.uv.zw = TRANSFORM_TEX(v.uv, _FurTex);
+	o.worldNormal = UnityObjectToWorldNormal(normal);
+	o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 	return o;
 }
 
 fixed4 frag_fur(v2f i) : SV_Target
 {
-	fixed4 mainCol = tex2D(_MainTex, i.uv_main);
-	fixed4 furCol = tex2D(_FurTex, i.uv_fur);
-	mainCol.a = clamp(furCol - FUR_OFFSET * FUR_OFFSET * _FurDensity, 0, 1);
+	fixed4 mainCol = tex2D(_MainTex, i.uv.xy);
+	fixed4 furCol = tex2D(_FurTex, i.uv.zw);
+	
+	float3 worldNormal = normalize(i.worldNormal);
+	float3 worldView = normalize(_WorldSpaceCameraPos.xyz - i.worldPos);
+	float occlusion = FUR_OFFSET * FUR_OFFSET + 0.04;
+	float fresnel = 1 - max(0, dot(worldNormal, worldView));
+	float rimLight = fresnel * occlusion;
+
+	mainCol.rgb *= _Color;
+	mainCol.rgb -= pow(1 - FUR_OFFSET, 3) * _FurShading;
+	mainCol.rgb += _RimColor * pow(rimLight, _RimPower);
+
+	float alpha = 1 - FUR_OFFSET * FUR_OFFSET;
+	alpha = max(0, alpha);
+	alpha *= step(FUR_OFFSET * FUR_OFFSET, furCol.r);
+	mainCol.a = alpha;
 
 	return mainCol;
 }

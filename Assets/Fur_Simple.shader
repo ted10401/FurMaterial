@@ -2,15 +2,19 @@
 {
     Properties
     {
+		_Color ("Color", Color) = (1, 1, 1, 1)
         _MainTex ("Main Texture", 2D) = "white" {}
 		_FurTex ("Fur Texture", 2D) = "white" {}
+		_Gravity("Gravity (xyz: direction, w: strength)", Vector) = (0, -1, 0, 1)
+		_RimColor("Rim Color", Color) = (1, 1, 1, 1)
+		_RimPower("Rim Power", Float) = 1
+		_FurShading ("Fur Shading", Float) = 1
 		_FurLength ("Fur Length", Float) = 1
 		_FurDensity ("Fur Density", Float) = 1
     }
     SubShader
     {
 		Tags {"RenderType" = "Transparent" "Queue" = "Transparent"}
-		Cull Off
 		Blend SrcAlpha OneMinusSrcAlpha
         LOD 100
 
