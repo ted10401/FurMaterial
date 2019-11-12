@@ -3,3 +3,5 @@ Logs/
 Temp/
 *.sln
 .vs/
+*.csproj
+obj/

@@ -29,7 +29,6 @@ float4 _RimColor;
 float _RimPower;
 float _FurShading;
 float _FurLength;
-float _FurDensity;
 
 v2f vert_base(a2v v)
 {

@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: FurSimple_Cloth
-  m_Shader: {fileID: 4800000, guid: b2fd2907a5173e2458d0bc5db86c1e3a, type: 3}
+  m_Name: FurStandardFur
+  m_Shader: {fileID: 4800000, guid: 5b567a47ba2dc5c4681932723fc532c8, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -67,15 +67,15 @@ Material:
     - _FabricScale: 1
     - _FurDensity: 5
     - _FurLength: 1
-    - _FurShading: 2.6
+    - _FurShading: 2.5
     - _GlossMapScale: 1
-    - _Glossiness: 0.5
+    - _Glossiness: 0
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _RimPower: 3.29
+    - _RimPower: 3
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

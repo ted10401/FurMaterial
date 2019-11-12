@@ -1,4 +1,4 @@
-﻿Shader "Unlit/Fur_Simple"
+﻿Shader "Fur/Simple 20 Layers"
 {
     Properties
     {
@@ -10,7 +10,6 @@
 		_RimPower("Rim Power", Float) = 1
 		_FurShading ("Fur Shading", Float) = 1
 		_FurLength ("Fur Length", Float) = 1
-		_FurDensity ("Fur Density", Float) = 1
     }
     SubShader
     {
